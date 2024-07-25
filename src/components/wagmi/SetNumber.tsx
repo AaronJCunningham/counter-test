@@ -8,7 +8,7 @@ function SetNumber() {
   const { address, isConnected } = useAccount();
   const [transactionHash, setTransactionHash] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [number, setNumber] = useState(0);
+  const [number, setNumber] = useState<number | null>(null);
 
   const handleClick = async () => {
     try {
@@ -24,6 +24,10 @@ function SetNumber() {
         signer
       );
 
+      if (number === null) {
+        throw new Error("Number is not set.");
+      }
+
       const tx = await contract.setNumber(number);
       setTransactionHash(tx.hash);
       await tx.wait();
@@ -37,7 +41,8 @@ function SetNumber() {
       <input
         type="number"
         onChange={(e) => setNumber(Number(e.target.value))}
-        value={number}
+        value={number !== null ? number.toString() : ""}
+        placeholder="0"
         className="rounded-md text-black border border-gray-300 p-2 h-10"
       />
 
